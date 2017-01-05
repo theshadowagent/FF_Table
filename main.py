@@ -2,29 +2,27 @@ import re, os, sys
 from prettytable import PrettyTable
 
 #TODO: folder = input()
-folder = 'Александр_Иоффе'
+print("Сравнение таблиц выгрузки")
+print("Имена файлов можно вводить как с расширением так и без")
+print("Введите имя папки")
+folder = input()
+print("Введите имя первого файла:")
+name1 = re.sub('.csv', '', input())
+print("Введите имя второго файла")
+name2 = re.sub('.csv', '', input())
 
 # 2 файла в папке с именем-фамилией
 flag = True
-name1 = name2 = ''
-for file_name in os.listdir('data/' + folder):
-    if '.csv' in file_name:
-        if flag:
-            name1 = file_name
-            flag = False
-        else:
-            name2 = file_name
-
 print(name1, name2)
 
 if name1 == '' or name2 == '':
     print("Error: can't found 2 .csv files")
     sys.exit(1)
 
-with open('data/' + folder + '/' + name1, 'r') as f:
+with open('data/' + folder + '/' + name1 + '.csv', 'r') as f:
     file1 = f.read().split('\n')
 
-with open('data/' + folder + '/' + name2, 'r') as f:
+with open('data/' + folder + '/' + name2 + '.csv', 'r') as f:
     file2 = f.read().split('\n')
 
 
@@ -115,8 +113,6 @@ def compare_tables(table1, table2):
 table1 = handle_table(file1)
 table2 = handle_table(file2)
 table = compare_tables(table1, table2)
-for el in table1:
-    print(el)
 pt = PrettyTable()
 pt._set_field_names(table1[0])
 for el in table:
