@@ -77,8 +77,8 @@ def compare_tables(table1, table2, hide_old_data=True):
                 if el1 == el2 and hide_old_data:
                     table[i].append('---')
                 else:
-                    if el1 == 'No':
-                        if el2 != 'No':
+                    if el1 == 'Not seen' or el1 == '':
+                        if el2 != 'Not seen' and el2 != '':
                             table[i].append(el2 + ' (+)')
                         else:
                             table[i].append(el2)
@@ -140,7 +140,7 @@ def print_course_progress(table, column_names):
                         course_stats[column_names[k]]['solved'][0] += float(solved) / total
                         course_stats[column_names[k]]['solved'][1] += float(solved) / total
 
-    # Создаем словарь предмет: иноформация по курсам для упрощенного вывода
+    # Создаем словарь {предмет: иноформация по курсам} для упрощенного вывода
     stats = {}
     for course in course_stats.keys():
         subject = course[:course.find('.')]
