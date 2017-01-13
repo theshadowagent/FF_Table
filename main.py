@@ -3,6 +3,7 @@ from prettytable import PrettyTable
 
 
 def open_files():
+    global dir
     for i in range(3):
         print("Введите имя папки")
         dir = input()
@@ -107,7 +108,11 @@ def compare_tables(table1, table2, hide_old_data=True):
                 else:
                     if el1 == 'Not seen' or el1 == '':
                         if el2 != 'Not seen' and el2 != '':
-                            table[i].append(el2 + '(+)')
+                            if not hide_old_data:
+                                elem = el2 + ' (+)'
+                            else:
+                                elem = el2
+                            table[i].append(elem)
                         else:
                             table[i].append(el2)
                     else:
@@ -176,31 +181,33 @@ def print_course_progress(table, column_names):
         if subject not in stats:
             stats[subject] = subject + ':\n'
         if course_stats[course]['seen'][0] == course_stats[course]['seen'][1]:
-            stats[subject] += '{0}  — просмотрено {1}/{2}, '.format(course_name, course_stats[course]['seen'][0],
+            stats[subject] += '{0}: просмотрено {1}/{2}, '.format(course_name, course_stats[course]['seen'][0],
                                                                  course_stats[course]['seen'][2])
         else:
-            stats[subject] += '{0}  — просмотрено {1}({2})/{3}, '.format(course_name, course_stats[course]['seen'][0],
+            stats[subject] += '{0}: просмотрено {1}({2})/{3}, '.format(course_name, course_stats[course]['seen'][0],
                                                                      course_stats[course]['seen'][1],
                                                                      course_stats[course]['seen'][2])
         if course_stats[course]['solved'][0] == course_stats[course]['solved'][1]:
             stats[subject] += 'сделано {0:.1f}/{1} занятий\n'.format(course_stats[course]['solved'][0],
-                                                       course_stats[course]['solved'][2])
+                                                       course_stats[course]['solved'][2]).replace('.0', '')
         else:
             stats[subject] += 'сделано {0:.1f}({1:.1f})/{2} занятий\n'.format(course_stats[course]['solved'][0],
                                                            course_stats[course]['solved'][1],
-                                                           course_stats[course]['solved'][2])
+                                                           course_stats[course]['solved'][2]).replace('.0', '')
 
     # Выводим словарь
     for subject in stats.keys():
-        print(stats[subject])
+        print(re.sub('«|»', '\"', stats[subject]))
+
+
+print("Сравнение таблиц выгрузки")
 
 while True:
-    print("Сравнение таблиц выгрузки")
 
     file1, file2 = open_files()
     table1 = handle_table(file1)
     table2 = handle_table(file2)
-    detailed_table = compare_tables(table1.copy(), table2.copy(), False)
+    detailed_table = compare_tables(table1, table2, False)
     print_course_progress(detailed_table, table1[0][1:])
 
     table = compare_tables(table1, table2)
@@ -208,5 +215,9 @@ while True:
     pt._set_field_names(table1[0])
     for el in table:
         pt.add_row(el)
-    print(pt)
+    pt.get_string()
+    output_file = open(dir + '/output_table.txt', 'w')
+    output_file.write(pt.get_string())
+    print('Сравнительная таблица была записана в файл output_table.txt, находящийся в папке ' + dir)
+    # print(pt)
     print()
