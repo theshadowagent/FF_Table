@@ -105,7 +105,7 @@ def compare_tables(table1, table2, hide_old_data=True):
                 else:
                     if el1 == 'Not seen' or el1 == '':
                         if el2 != 'Not seen' and el2 != '':
-                            table[i].append(el2)
+                            table[i].append(el2 + '(+)')
                         else:
                             table[i].append(el2)
                     else:
