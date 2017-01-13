@@ -1,7 +1,6 @@
 import re, os, sys
 from prettytable import PrettyTable
 
-
 def open_files():
     for i in range(3):
         print("Введите имя папки")
@@ -37,14 +36,13 @@ def open_files():
         print("Попытки закончились.")
         exit()
 
-    with open(dir + '/' + name1, 'r') as f:
+    with open(dir + '/' + name1, 'r', encoding="UTF-8") as f:
         file1 = f.read().split('\n')
 
-    with open(dir + '/' + name2, 'r') as f:
+    with open(dir + '/' + name2, 'r', encoding="UTF-8") as f:
         file2 = f.read().split('\n')
 
     return [file1, file2]
-
 
 def handle_table(file):
     file[0] = re.sub(', ', '. ', file[0])
@@ -168,7 +166,6 @@ def print_course_progress(table, column_names):
                         course_stats[column_names[k]]['solved'][0] += float(solved) / total
                         course_stats[column_names[k]]['solved'][1] += float(solved) / total
 
-    # print(course_stats)
     # Создаем словарь {предмет: иноформация по курсам} для упрощенного вывода
     stats = {}
     for course in course_stats.keys():
@@ -199,7 +196,6 @@ while True:
     print("Сравнение таблиц выгрузки")
 
     file1, file2 = open_files()
-
     table1 = handle_table(file1)
     table2 = handle_table(file2)
     detailed_table = compare_tables(table1, table2, False)
