@@ -17,8 +17,7 @@ def open_files():
     dir = 'data/' + dir
 
     for i in range(3):
-        print("Введите"
-              " имя первого файла:")
+        print("Введите имя первого файла:")
         name1 = input()
         if name1 in os.listdir(dir):
             break
