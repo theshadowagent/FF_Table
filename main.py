@@ -1,6 +1,7 @@
 import re, os, sys
 from prettytable import PrettyTable
 
+
 def open_files():
     for i in range(3):
         print("Введите имя папки")
@@ -43,6 +44,7 @@ def open_files():
         file2 = f.read().split('\n')
 
     return [file1, file2]
+
 
 def handle_table(file):
     file[0] = re.sub(', ', '. ', file[0])
@@ -198,7 +200,7 @@ while True:
     file1, file2 = open_files()
     table1 = handle_table(file1)
     table2 = handle_table(file2)
-    detailed_table = compare_tables(table1, table2, False)
+    detailed_table = compare_tables(table1.copy(), table2.copy(), False)
     print_course_progress(detailed_table, table1[0][1:])
 
     table = compare_tables(table1, table2)
