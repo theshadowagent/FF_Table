@@ -63,7 +63,7 @@ def handle_table(file):
     for lesson in file[1:]:
         line = [lesson[0]]
         for i in range(1, len(lesson)):
-            if i % 3 == 1: # Смотрел ли и как
+            if i % 3 == 1:  # Смотрел ли и как
                 if lesson[i] == '---x---':
                     line.append("Not seen")
                 elif lesson[i] == 'онлайн':
@@ -74,7 +74,7 @@ def handle_table(file):
                     line.append('')
             elif i % 3 == 2:
                 lesson[i] = re.search('">[\w/-]+</', lesson[i])
-                if lesson[i] != None:
+                if lesson[i] is not None:
                     line.append(re.sub('-', '0', lesson[i].group(0)[2:-2]))
                 else:
                     line.append('')
@@ -90,7 +90,14 @@ def compare_tables(table1, table2, hide_old_data=True):
     for i in range(max(len(table1), len(table2))):
         # Проверяем на разные длины таблиц
         if i == len(table1):
-            table.append(table2[i])
+            if not hide_old_data:
+                row_copy = list(table2[i])  # Создаем копию, а не присваиваем ссылку на объект
+                for j in range(1, len(row_copy)):
+                    if j % 3 == 1 and row_copy[j] != '' and 'Not seen' not in row_copy[j]:
+                        row_copy[j] += ' (+)'
+                table.append(row_copy)
+            else:
+                table.append(table2[i])
             break
         elif i == len(table2):
             table.append(table1[i])
@@ -128,10 +135,10 @@ def compare_tables(table1, table2, hide_old_data=True):
                 else:
                     if j % 3 == 2:
                         score1 = int(el1.split('/')[0])
-                        score2 = int(el2.split('/')[0])
+                        score2 = int(el2.split('/')[0]) if el2 != '' else 0
                     else:
                         score1 = float(el1.split('/')[0])
-                        score2 = float(el2.split('/')[0])
+                        score2 = float(el2.split('/')[0]) if el2 != '' else 0
                     if el1 != el2:
                         table[i].append(str(max(score1, score2)) + '(' + str(min(score1, score2)) + ')/'
                                     + el1.split('/')[1])
@@ -156,7 +163,7 @@ def print_course_progress(table, column_names):
                         if '+' not in row[i]:
                             course_stats[column_names[j]]['seen'][1] += 1
             elif i % 3 == 2:  # Solving stats
-                k = j - 1
+                k = i - 2
                 if row[i] != '(-)' and row[i] != '':
                     course_stats[column_names[k]]['solved'][2] += 1
                     if '(' in row[i]:
@@ -168,15 +175,16 @@ def print_course_progress(table, column_names):
                         course_stats[column_names[k]]['solved'][0] += float(solved_new) / total
                         course_stats[column_names[k]]['solved'][1] += float(solved_old) / total
                     else:
-                        p = row[i].find('/')
-                        solved = int(row[i][:p])
-                        total = int(row[i][p+1:])
+                        solved = int(row[i].split('/')[0])
+                        total = int(row[i].split('/')[1])
                         course_stats[column_names[k]]['solved'][0] += float(solved) / total
                         course_stats[column_names[k]]['solved'][1] += float(solved) / total
 
     # Создаем словарь {предмет: иноформация по курсам} для упрощенного вывода
     stats = {}
     for course in course_stats.keys():
+        if 'Подготовка к олимпиадам' in course:
+            continue
         subject = course[:course.find('.')]
         course_name = course[course.find('.')+2:]
         if subject not in stats:
@@ -196,6 +204,7 @@ def print_course_progress(table, column_names):
                                                            course_stats[course]['solved'][1],
                                                            course_stats[course]['solved'][2]).replace('.0', '')
 
+    print('Прогресс за неделю:')
     # Выводим словарь
     for subject in stats.keys():
         print(re.sub('«|»', '\"', stats[subject]))
