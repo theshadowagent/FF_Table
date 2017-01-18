@@ -17,7 +17,8 @@ def open_files():
     dir = 'data/' + dir
 
     for i in range(3):
-        print("Введите имя первого файла:")
+        print("Введите"
+              " имя первого файла:")
         name1 = input()
         if name1 in os.listdir(dir):
             break
@@ -97,7 +98,7 @@ def compare_tables(table1, table2, hide_old_data=True):
             break
 
         table.append([])
-        table[i].append(table1[i][0]) # Нумерация
+        table[i].append(table1[i][0])  # Нумерация
 
         for j in range(1, len(table1[i])):
             el1 = table1[i][j]
@@ -121,9 +122,10 @@ def compare_tables(table1, table2, hide_old_data=True):
                 if el1 == el2 and hide_old_data:
                     table[i].append('---')
                 elif el1 == '':
-                    table[i].append(el2 + '(-)')
-                elif el2 == '':
-                    table[i].append(el1 + '(-)')
+                    if el2 == '':
+                        table[i].append('(-)')
+                    else:
+                        table[i].append(el2)
                 else:
                     if j % 3 == 2:
                         score1 = int(el1.split('/')[0])
@@ -215,7 +217,6 @@ while True:
     pt._set_field_names(table1[0])
     for el in table:
         pt.add_row(el)
-    pt.get_string()
     output_file = open(dir + '/output_table.txt', 'w')
     output_file.write(pt.get_string())
     print('Сравнительная таблица была записана в файл output_table.txt, находящийся в папке ' + dir)
