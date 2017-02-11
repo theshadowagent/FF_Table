@@ -140,10 +140,10 @@ def compare_tables(table1, table2, hide_old_data=True):
                         score1 = float(el1.split('/')[0])
                         score2 = float(el2.split('/')[0]) if el2 != '' else 0
                     if el1 != el2:
-                        table[i].append(str(max(score1, score2)) + '(' + str(min(score1, score2)) + ')/'
-                                    + el1.split('/')[1])
+                        table[i].append(str(score2) + '(' + str(score1) + ')/'
+                                    + el2.split('/')[1] if el2 != '' else '')  # str(max(score1, score2)), str(min(score1, score2))
                     else:
-                        table[i].append(str(score1) + '/' + el1.split('/')[1])
+                        table[i].append(str(score1) + '/' + el2.split('/')[1] if el2 != '' else '')
     return table
 
 
